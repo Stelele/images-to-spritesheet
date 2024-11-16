@@ -1,0 +1,45 @@
+{
+  "name": "image-to-spritesheet",
+  "author": "Gift Mugweni",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build && npm run build:electron",
+    "preview": "vite preview",
+    "dev:electron": "electron dist/main.js",
+    "build:electron": "vite build -c vite.config.electron.ts",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "dependencies": {
+    "bin-pack": "^1.0.2",
+    "detect-edges": "^1.1.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "glob": "^11.0.0",
+    "skia-canvas": "^1.0.2",
+    "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.14",
+    "electron": "^33.2.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.10",
+    "vue-tsc": "^2.1.8"
+  }
+}
