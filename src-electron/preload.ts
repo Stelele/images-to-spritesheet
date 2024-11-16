@@ -3,8 +3,7 @@ import { IOptions } from "./spritesheet"
 const { contextBridge, ipcRenderer } = require("electron")
 
 contextBridge.exposeInMainWorld('electron', {
-    openFolderSelect: () => ipcRenderer.invoke('dialog:select-dir'),
-    openFileSave: () => ipcRenderer.invoke('dialog:save-file'),
-    writeToFile: (fileName: string, data: string | NodeJS.ArrayBufferView) => ipcRenderer.invoke('files:save-file', fileName, data),
+    openFolderSelect: (defaultPath?: string) => ipcRenderer.invoke('dialog:select-dir', defaultPath),
+    openFileSave: (defaultPath?: string) => ipcRenderer.invoke('dialog:save-file', defaultPath),
     spriteSheet: (imagesFolder: string, outputName: string) => ipcRenderer.invoke('spriteSheet', imagesFolder, outputName),
 })

@@ -59,16 +59,16 @@ async function spriteSheet(paths: string[], options: IOptions) {
         const { width, height } = source;
         const playground = new Canvas(width, height);
         const playgroundContext = playground.getContext("2d");
-        // playground.width = width;
-        // playground.height = height;
         playgroundContext.drawImage(source, 0, 0);
 
+        // @ts-ignore
         const cropped = crop ? await cropping(playground) : {
             top: 0,
             right: 0,
             bottom: 0,
             left: 0,
-        };
+        }
+
         return {
             width: (width - cropped.left - cropped.right) + margin,
             height: (height - cropped.top - cropped.bottom) + margin,
@@ -145,8 +145,9 @@ export async function imagesToSpriteSheet(e: IpcMainInvokeEvent, dirPath: string
     try {
         const pngFiles = (await glob(`${dirPath.replaceAll("\\", "/")}/**/*.png`)).sort()
 
-        const options = {
+        const options: IOptions = {
             outputFormat: "png",
+            outputName: `${output}.png`,
         }
 
         const { json, image } = await spriteSheet(pngFiles, options);

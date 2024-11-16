@@ -1,36 +1,42 @@
 import { app, BrowserWindow, ipcMain } from "electron"
-import { showFileSave, showFolderSelect, writeFile } from "./funcs"
+import { showFileSave, showFolderSelect } from "./funcs"
 import path from 'path';
 import { imagesToSpriteSheet } from "./spritesheet";
 
 export function createWindow() {
-    const mainWindow = new BrowserWindow({
+
+    let url: string
+    let preloadPath: string
+    // @ts-ignore
+    if (import.meta.env.DEV) {
+        // @ts-ignore
+        url = import.meta.env.ELECTRON_APP_URL
+        preloadPath = path.resolve(app.getAppPath(), "preload.js")
+    } else {
+        // @ts-ignore
+        url = `file:${app.getAppPath()}/dist/${import.meta.env.ELECTRON_APP_URL}`
+        preloadPath = path.resolve(app.getAppPath(), "dist", "preload.js")
+    }
+
+    const mainWindow: BrowserWindow = new BrowserWindow({
         width: 800,
         height: 600,
         useContentSize: true,
         webPreferences: {
             contextIsolation: true,
-            preload: path.resolve(app.getAppPath(), "preload.js")
+            preload: preloadPath
         }
     })
 
-    mainWindow.setMenuBarVisibility(false)
-    // when in dev mode, load the url and open the dev tools
     // @ts-ignore
-    if (import.meta.env.DEV) {
-        // @ts-ignore
-        mainWindow.loadURL(import.meta.env.ELECTRON_APP_URL)
-        // mainWindow?.webContents.openDevTools()
-    } else {
-        // in production, close the dev tools
+    if (!import.meta.env.DEV) {
         mainWindow.webContents.on('devtools-opened', () => {
             mainWindow?.webContents.closeDevTools()
         })
-
-        // load the build file instead
-        // @ts-ignore
-        mainWindow.loadFile(import.meta.env.ELECTRON_APP_URL)
     }
+
+    mainWindow.loadURL(url)
+    mainWindow.setMenuBarVisibility(false)
 
     return mainWindow
 }
@@ -38,6 +44,5 @@ export function createWindow() {
 export function mapHandlers() {
     ipcMain.handle('dialog:select-dir', showFolderSelect)
     ipcMain.handle('dialog:save-file', showFileSave)
-    ipcMain.handle('files:save-file', writeFile)
     ipcMain.handle('spriteSheet', imagesToSpriteSheet)
 }

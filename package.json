@@ -1,19 +1,20 @@
 {
   "name": "image-to-spritesheet",
   "author": "Gift Mugweni",
+  "description": "A simple desktop application to covert a bunch of images into a single spritesheet image.",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/main.js",
+  "main": "./dist/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build && npm run build:electron",
     "preview": "vite preview",
     "dev:electron": "electron dist/main.js",
     "build:electron": "vite build -c vite.config.electron.ts",
-    "start": "electron-forge start",
+    "start": "npm run build && electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "npm run build && electron-forge make"
   },
   "dependencies": {
     "bin-pack": "^1.0.2",
