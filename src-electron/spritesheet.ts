@@ -28,7 +28,7 @@ export type IOptions = Partial<typeof defaultOptions>
  * @param {Options} [options] - Some options
  * @returns {Promise<{json: Object, buffer: Buffer}>}
  */
-async function spriteSheet(paths: string[], options: IOptions) {
+async function spriteSheet(paths: string[], options: IOptions, prefix: string) {
     const { outputFormat, margin, crop, outputName } = {
         ...defaultOptions,
         ...options,
@@ -104,7 +104,7 @@ async function spriteSheet(paths: string[], options: IOptions) {
         frames: items
             .sort((a: any, b: any) => a.item.source.src.localeCompare(b.item.source.src))
             .reduce((acc: any, { x, y, width: w, height: h, item }: any) => {
-                acc[item.source.src] = {
+                acc[item.source.src.replace(`${prefix}\\`, "")] = {
                     // Position and size in the spritesheet
                     frame: {
                         x: x + margin,
@@ -150,7 +150,7 @@ export async function imagesToSpriteSheet(e: IpcMainInvokeEvent, dirPath: string
             outputName: `${output}.png`,
         }
 
-        const { json, image } = await spriteSheet(pngFiles, options);
+        const { json, image } = await spriteSheet(pngFiles, options, dirPath);
 
         fs.writeFileSync(`${output}.png`, image);
         fs.writeFileSync(`${output}.json`, JSON.stringify(json, undefined, 4));

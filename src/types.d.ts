@@ -9,9 +9,8 @@ type ISpriteSheet = {
 
 interface Window {
     electron: {
-        openFolderSelect: () => Promise<string?>
-        openFileSave: () => Promise<string?>
-        writeToFile: (fileName: string, data: string | NodeJS.ArrayBufferView) => void
+        openFolderSelect: (defaultPath?: string) => Promise<string?>
+        openFileSave: (defaultPath?: string) => Promise<string?>
         spriteSheet: (imagesFolder: string, outputName: string) => Promise<ISpriteSheet>
     }
 }

@@ -59,13 +59,15 @@ const canCreateImage = computed(() => !!imagesFolder.value.length && !!spriteShe
 const isProccessing = ref(false)
 
 async function selectImageFolder() {
-  const folder = await window.electron.openFolderSelect()
+  const path = imagesFolder.value.length ? imagesFolder.value : undefined
+  const folder = await window.electron.openFolderSelect(path)
   if (!folder) return
   imagesFolder.value = folder
 }
 
 async function selectSaveLocation() {
-  const saveLoc = await window.electron.openFileSave()
+  const path = spriteSheetOut.value.length ? spriteSheetOut.value : undefined
+  const saveLoc = await window.electron.openFileSave(path)
   if (!saveLoc) return
   spriteSheetOut.value = saveLoc
 }
