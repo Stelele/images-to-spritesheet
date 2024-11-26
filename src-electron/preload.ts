@@ -1,5 +1,3 @@
-import { IOptions } from "./spritesheet"
-
 const { contextBridge, ipcRenderer } = require("electron")
 
 contextBridge.exposeInMainWorld('electron', {

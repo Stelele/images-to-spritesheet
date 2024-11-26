@@ -7,7 +7,11 @@ export default defineConfig((env) => ({
     emptyOutDir: false,
     ssr: true,
     rollupOptions: {
-      input: ['src-electron/main.ts', 'src-electron/preload.ts']
+      input: [
+        'src-electron/main.ts',
+        'src-electron/preload.ts',
+        'src-electron/worker.ts'
+      ]
     },
     minify: env.mode === "production" ? true : false,
   },

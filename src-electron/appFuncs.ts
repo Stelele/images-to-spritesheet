@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron"
-import { showFileSave, showFolderSelect } from "./funcs"
-import path from 'path';
-import { imagesToSpriteSheet } from "./spritesheet";
+import { showFileSave, showFolderSelect, imagesToSpriteSheet } from "./funcs"
+import path from 'path'
 
 export function createWindow() {
 
@@ -24,7 +23,7 @@ export function createWindow() {
         useContentSize: true,
         webPreferences: {
             contextIsolation: true,
-            preload: preloadPath
+            preload: preloadPath,
         }
     })
 

@@ -1,10 +1,9 @@
 import { Canvas, loadImage } from "skia-canvas";
 import cropping from "detect-edges";
 import pack from "bin-pack";
-import { IpcMainInvokeEvent } from "electron";
 import { glob } from "glob";
 import fs from "fs"
-
+import { parentPort } from "worker_threads"
 
 const defaultOptions = {
     outputFormat: "png",
@@ -13,7 +12,13 @@ const defaultOptions = {
     outputName: "spritesheet.png",
 };
 
-export type IOptions = Partial<typeof defaultOptions>
+type IOptions = Partial<typeof defaultOptions>
+
+parentPort?.on("message", async (data) => {
+    const { dirPath, output } = data
+    parentPort?.postMessage(await imagesToSpriteSheet(dirPath, output))
+})
+
 
 /**
  * @typedef {Object} Options
@@ -28,7 +33,7 @@ export type IOptions = Partial<typeof defaultOptions>
  * @param {Options} [options] - Some options
  * @returns {Promise<{json: Object, buffer: Buffer}>}
  */
-async function spriteSheet(paths: string[], options: IOptions, prefix: string) {
+async function spriteSheet(paths: string[], options: IOptions, prefix: string, outputFile: string) {
     const { outputFormat, margin, crop, outputName } = {
         ...defaultOptions,
         ...options,
@@ -132,38 +137,30 @@ async function spriteSheet(paths: string[], options: IOptions, prefix: string) {
     };
 
     // Write image
-    // @ts-ignore
-    const image = await canvas.toBuffer(`image/${outputFormat}`);
+    const image = await canvas.toBuffer("png");
 
     return {
         json,
         image,
     };
-};
+}
 
-export async function imagesToSpriteSheet(e: IpcMainInvokeEvent, dirPath: string, output: string) {
-    try {
-        const pngFiles = (await glob(`${dirPath.replaceAll("\\", "/")}/**/*.png`)).sort()
+async function imagesToSpriteSheet(dirPath: string, output: string) {
+    const pngFiles = (await glob(`${dirPath.replaceAll("\\", "/")}/**/*.png`)).sort()
 
-        const options: IOptions = {
-            outputFormat: "png",
-            outputName: `${output}.png`,
-        }
+    const options: IOptions = {
+        outputFormat: "png",
+        outputName: `${output}.png`,
+    }
 
-        const { json, image } = await spriteSheet(pngFiles, options, dirPath);
+    const { json, image } = await spriteSheet(pngFiles, options, dirPath, output);
 
-        fs.writeFileSync(`${output}.png`, image);
-        fs.writeFileSync(`${output}.json`, JSON.stringify(json, undefined, 4));
+    fs.writeFile(`${output}.png`, image, (err) => (console.error(err)));
+    fs.writeFile(`${output}.json`, JSON.stringify(json, undefined, 4), (err) => (console.error(err)));
 
-        return {
-            succeded: true,
-            imageLoc: `${output}.png`,
-            jsonLoc: `${output}.json`,
-        }
-    } catch (e) {
-        return {
-            succeded: false,
-            error: e,
-        }
+    return {
+        succeded: true,
+        imageLoc: `${output}.png`,
+        jsonLoc: `${output}.json`,
     }
 }
